@@ -52,7 +52,9 @@ jobs:
         # - fail only for high or critical severity vulns
       - run:
           name: Snyk Test
-          command: |
+          command: 
+          
+          snyk test --severity-threshold=high --fail-on=upgradable
             snyk version
  
 workflows:
