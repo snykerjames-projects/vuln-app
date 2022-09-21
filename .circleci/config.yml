@@ -22,4 +22,4 @@ jobs: # a collection of steps
           command: snyk auth $SNYK_TOKEN
       - run: # run snyk test 
           name: snyk test
-          command: snyk test --severity-threshold=high --fail-on=upgradeable
+          command: snyk test --severity-threshold=high --fail-on=upgradable
