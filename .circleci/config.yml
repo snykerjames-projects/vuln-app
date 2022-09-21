@@ -7,17 +7,12 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-<<<<<<< HEAD
-          keys:
-            - node-deps-v1-{{ .Branch }}-{{checksum "package-lock.json"}}
-=======
           # See the configuration reference documentation for more details on using restore_cache and save_cache steps
           # https://circleci.com/docs/2.0/configuration-reference/?section=reference#save_cache
           keys:
             - node-deps-v1-{{ .Branch }}-{{checksum "package-lock.json"}}
 
       # it's imperative to install npm packages so that Snyk will test the versions of the deps that will be part of the build
->>>>>>> 7c33ea58e0f1d21659e2055e08e0349faeba7d5d
       - run:
           name: install packages
           command: npm ci
@@ -34,36 +29,17 @@ jobs:
       - image: cimg/node:15.1
     steps:
       - checkout
-<<<<<<< HEAD
-      - restore_cache:
-          keys:
-            - node-deps-v1-{{ .Branch }}-{{checksum "package-lock.json"}}
-=======
 
       # this next step makes sure that Snyk can access the manifest files and installed dependencies (from the previous job)
       - restore_cache:
           keys:
             - node-deps-v1-{{ .Branch }}-{{checksum "package-lock.json"}}
 
->>>>>>> 7c33ea58e0f1d21659e2055e08e0349faeba7d5d
       - run:
           name: Snyk Setup
           command: |
             curl https://static.snyk.io/cli/latest/snyk-linux -o snyk
             chmod +x ./snyk
-<<<<<<< HEAD
-            ./snyk auth $SNYK_TOKEN
-
-      - run:
-          name: Snyk Test
-          command: |
-            ./snyk test --fail-on=upgradable --severity-threshold=high --org=$SNYK_ORG
-
-
-# Invoke jobs via workflows
-workflows:
-  default:
-=======
             sudo mv ./snyk /usr/local/bin/snyk
           # {{ Use the circlci build logs to add the missing step to the snyk setup commands here }}
           # Pass the authentication token to snyk using the $SNYK_TOKEN environment variable
@@ -81,7 +57,6 @@ workflows:
  
 workflows:
   tsm-bootcamp:
->>>>>>> 7c33ea58e0f1d21659e2055e08e0349faeba7d5d
     jobs:
       - build
       - snyk_scan:
