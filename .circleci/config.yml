@@ -53,7 +53,7 @@ jobs:
       - run:
           name: Snyk Test
           command: 
-          
+          snyk auth SNYK_TOKEN
           snyk test --severity-threshold=high --fail-on=upgradable
             snyk version
  
