@@ -1,64 +1,25 @@
-version: 2.1
-
-jobs:
-  build:
-    docker:
-      - image: cimg/node:15.1
-    steps:
-      - checkout
-      - restore_cache:
-          # See the configuration reference documentation for more details on using restore_cache and save_cache steps
-          # https://circleci.com/docs/2.0/configuration-reference/?section=reference#save_cache
-          keys:
-            - node-deps-v1-{{ .Branch }}-{{checksum "package-lock.json"}}
-
-      # it's imperative to install npm packages so that Snyk will test the versions of the deps that will be part of the build
+version: 2.1 # use CircleCI 2.0
+orbs: 
+    snyk: snyk/snyk@1.1.2
+jobs: # a collection of steps
+  build: # runs not using Workflows must have a `build` job as entry point
+    working_directory: ~/nodejs-goof # directory where steps will run
+    docker: # run the steps with Docker
+      - image: circleci/node # ...with this image as the primary container; this is where all `steps` will run
+    steps: # a collection of executable commands
+      - checkout # special step to check out source code to working directory
       - run:
-          name: install packages
-          command: npm ci
-
-      # {{ the build would normally happen here }}
-
-      - save_cache:
-          key: node-deps-v1-{{ .Branch }}-{{checksum "package-lock.json"}}
-          paths:
-            - ~/.npm
-
-  snyk_scan:
-    docker:
-      - image: cimg/node:15.1
-    steps:
-      - checkout
-
-      # this next step makes sure that Snyk can access the manifest files and installed dependencies (from the previous job)
-      - restore_cache:
-          keys:
-            - node-deps-v1-{{ .Branch }}-{{checksum "package-lock.json"}}
-
+          name: update-npm
+          command: 'sudo npm install -g npm@latest'
       - run:
-          name: Snyk Setup
-          command: |
-            curl https://static.snyk.io/cli/latest/snyk-linux -o snyk
-            chmod +x ./snyk
-            sudo mv ./snyk /usr/local/bin/snyk
-          # {{ Use the circlci build logs to add the missing step to the snyk setup commands here }}
-          # Pass the authentication token to snyk using the $SNYK_TOKEN environment variable
-          # Never place a Snyk auth token directly in a pipeline configuration file
-          # (this is a 'hardcoded secret'!)
-
-        # (intructions page 2, step 1a)
-        # Add commands to this `run` step to execute a snyk test with the following criteria:
-        # - fail only on vulns where a fix (upgrade) is available
-        # - fail only for high or critical severity vulns
-      - run:
-          name: Snyk Test
-          command: |
-            snyk version
- 
-workflows:
-  tsm-bootcamp:
-    jobs:
-      - build
-      - snyk_scan:
-          requires:
-            - build
+          name: install-snyk
+          command: 'sudo npm install -g snyk'     
+      - run: # run snyk help - test snyk is installed and working
+          name: snyk-help
+          command: snyk --help
+      - run: # run snyk auth - authenticate snyk use environment variables to add token
+          name: snyk auth
+          command: snyk auth $SNYK_TOKEN
+      - run: # run snyk test 
+          name: snyk test
+          command: snyk test --severity-threshold=high --fail-on=upgradable
