@@ -73,6 +73,7 @@
     "@types/marked": "^4.0.0",
     "abbrev": "^1.1.1",
     "ansi-escapes": "3.2.0",
+    "adm-zip": "0.4.7",
     "chalk": "^2.4.2",
     "cli-spinner": "0.2.10",
     "configstore": "^5.0.1",
