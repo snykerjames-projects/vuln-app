@@ -71,6 +71,7 @@
     "@snyk/snyk-hex-plugin": "1.1.4",
     "@types/jest-json-schema": "^6.1.1",
     "@types/marked": "^4.0.0",
+    "adm-zip": "0.4.7",
     "abbrev": "^1.1.1",
     "ansi-escapes": "3.2.0",
     "chalk": "^2.4.2",
