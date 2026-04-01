@@ -1,2 +1,2 @@
 pysnyk==0.9.3
-requests==1.0.0
+requests==2.33.0
